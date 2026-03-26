@@ -36,10 +36,6 @@ const globalErrorHandler = async (err) => {
 process.on('uncaughtException',  globalErrorHandler);
 process.on('unhandledRejection', globalErrorHandler);
 
-// ─── Abort helper ─────────────────────────────────────────────────────────────
-// Stops the spinner, deletes the partially-created project folder (cleanup rule),
-// prints a red error message, and exits with code 1.
-// Called on: copy failure, token replacement failure, any npm install failure.
 async function abort(message, detail = '') {
   spinner?.stop();
   if (await fs.pathExists(projectRoot)) {
