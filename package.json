@@ -1,0 +1,53 @@
+{
+  "name": "create-stackforge",
+  "version": "1.0.0",
+  "description": "CLI to scaffold a full-stack MERN application with optional JWT authentication",
+  "type": "module",
+  "keywords": [
+    "mern",
+    "cli",
+    "scaffold",
+    "boilerplate",
+    "react",
+    "express",
+    "mongodb",
+    "nodejs",
+    "fullstack",
+    "vite",
+    "tailwind",
+    "jwt",
+    "auth",
+    "create-app",
+    "starter"
+  ],
+  "author": {
+    "name": "Shivam Gupta",
+    "url": "https://github.com/shivamm2606"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shivamm2606/stackforge.git"
+  },
+  "homepage": "https://github.com/shivamm2606/stackforge#readme",
+  "bugs": {
+    "url": "https://github.com/shivamm2606/stackforge/issues"
+  },
+  "files": [
+    "bin",
+    "templates"
+  ],
+  "bin": {
+    "create-stackforge": "./bin/index.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "@inquirer/prompts": "^7.4.0",
+    "chalk": "^5.4.1",
+    "ora": "^8.2.0",
+    "commander": "^13.1.0"
+  }
+}
