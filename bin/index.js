@@ -17,6 +17,7 @@ const AUTH_TEMPLATE_DIR = path.join(__dirname, '..', 'templates', 'fullstack-aut
 
 // Module-level so abort() and the global handler can stop it from any point
 let spinner = null;
+let projectRoot;  // declared here so the global error handler can safely reference it
 
 // ─── Global catch ─────────────────────────────────────────────────────────────
 // Catches any unhandled exception or rejected promise not caught elsewhere.
@@ -54,7 +55,7 @@ async function abort(message, detail = '') {
 const nodeMajor = parseInt(process.versions.node.split('.')[0], 10);
 if (nodeMajor < 16) {
   console.error(
-    chalk.red(`\n  ✖ StackForge requires Node.js v16 or higher.\n`) +
+    chalk.red(`\n  ✖ QuickStack requires Node.js v16 or higher.\n`) +
     chalk.dim(`    You are running v${process.versions.node}\n`) +
     chalk.dim('    Download the latest LTS at https://nodejs.org\n')
   );
@@ -64,13 +65,14 @@ if (nodeMajor < 16) {
 // Step 2 — Parse project name from argv[2]
 const rawName = process.argv[2];
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Step 3 — Validate project name (empty, invalid chars)
 // ─────────────────────────────────────────────────────────────────────────────
-if (!rawName || rawName.startsWith('--')) {
+const isHelpOrVersion = ['--help', '-h', '--version', '-v'].includes(rawName);
+
+if (!isHelpOrVersion && (!rawName || rawName.startsWith('--'))) {
   console.error(
     chalk.red('\n  ✖ Project name is required.\n') +
-    chalk.dim('    Usage: create-stackforge <project-name> [--auth]\n')
+    chalk.dim('    Usage: create-quickstack <project-name> [--auth]\n')
   );
   process.exit(1);
 }
@@ -80,7 +82,7 @@ if (INVALID_CHARS.test(rawName)) {
   console.error(
     chalk.red(`\n  ✖ Invalid project name: "${rawName}"\n`) +
     chalk.dim('    Allowed characters: letters, numbers, spaces, hyphens, underscores.\n') +
-    chalk.dim('    Example: create-stackforge my-app\n')
+    chalk.dim('    Example: create-quickstack my-app\n')
   );
   process.exit(1);
 }
@@ -93,7 +95,7 @@ const projectName = rawName.trim().toLowerCase().replace(/\s+/g, '-');
 // ─────────────────────────────────────────────────────────────────────────────
 // Step 5 — Check if target folder already exists (exit if yes)
 // ─────────────────────────────────────────────────────────────────────────────
-const projectRoot = path.resolve(process.cwd(), projectName);
+projectRoot = path.resolve(process.cwd(), projectName);
 
 if (await fs.pathExists(projectRoot)) {
   console.error(
@@ -111,11 +113,11 @@ if (await fs.pathExists(projectRoot)) {
 const program = new Command();
 
 program
-  .name('create-stackforge')
-  .description('Scaffold a full-stack MERN project with StackForge')
+  .name('create-quickstack')
+  .description('Create a full-stack MERN app with QuickStack')
   .version('1.0.0', '-v, --version')
   .argument('[project-name]', 'Name of the project')
-  .option('--auth', 'Include authentication scaffolding (JWT + bcrypt)')
+  .option('--auth', 'Add authentication (JWT + bcrypt)')
   .allowUnknownOption()
   .parse(process.argv);
 
@@ -128,7 +130,7 @@ let withAuth = Boolean(options.auth);
 
 if (!options.auth) {
   withAuth = await confirm({
-    message: 'Include authentication scaffolding?',
+    message: 'Add authentication?',
     default: false,
   });
 }
@@ -139,7 +141,7 @@ if (!options.auth) {
 const divider = chalk.dim('  ' + '─'.repeat(43));
 
 console.log('');
-console.log(chalk.bold.cyan('  StackForge') + chalk.dim(' — Project Setup Summary'));
+console.log(chalk.bold.cyan('  QuickStack') + chalk.dim(' — Project Setup Summary'));
 console.log(divider);
 console.log(`  ${chalk.dim('Project name')}   ${chalk.bold.white(projectName)}`);
 console.log(`  ${chalk.dim('Location    ')}   ${chalk.white(projectRoot)}`);
@@ -148,12 +150,12 @@ console.log(divider);
 console.log('');
 
 const proceed = await confirm({
-  message: 'Scaffold this project?',
+  message: `Create project "${projectName}"?`,
   default: true,
 });
 
 if (!proceed) {
-  console.log(chalk.yellow('\n  Aborted — no files were created.\n'));
+  console.log(chalk.yellow('\n  Cancelled. No files were created.\n'));
   process.exit(0);
 }
 
@@ -183,12 +185,26 @@ if (withAuth) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Step 9.5 — Create .env from .env.example
+// ─────────────────────────────────────────────────────────────────────────────
+try {
+  await fs.copy(
+    path.join(projectRoot, '.env.example'),
+    path.join(projectRoot, '.env')
+  );
+  console.log(chalk.blue('  ℹ') + chalk.dim(' Created .env from example'));
+} catch (err) {
+  await abort('Failed to create .env file.', err.message);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Step 10 — Replace {{PROJECT_NAME}} tokens
 //           Targets: MONGO_URI in .env | name in package.json | title in README.md
 // ─────────────────────────────────────────────────────────────────────────────
 const TOKEN      = /\{\{PROJECT_NAME\}\}/g;
 const tokenFiles = [
   path.join(projectRoot, '.env'),
+  path.join(projectRoot, '.env.example'),
   path.join(projectRoot, 'package.json'),
   path.join(projectRoot, 'README.md'),
   path.join(projectRoot, 'client', 'index.html'),
@@ -209,44 +225,21 @@ for (const filePath of tokenFiles) {
 console.log('');
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Step 11 — Spin up ora spinner — 'Installing root dependencies...'
-// Steps 12-16: stop spinner before each execSync (stdio:inherit conflicts with
-//              spinner frames), restart with updated text for next phase.
-// Step 17: final spinner.succeed()
+// Step 11 — Install Dependencies (Workspaces)
+//           With NPM Workspaces configured, running `npm install` at the root
+//           automatically installs and hoists dependencies for client/ & server/
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ── Step 11 / 12 — Root ───────────────────────────────────────────────────────
-spinner = ora({ text: chalk.cyan('Installing root dependencies...'), color: 'cyan' }).start();
-spinner.stop();
+spinner = ora({ text: chalk.cyan('Installing project dependencies (this may take a minute)...'), color: 'cyan' }).start();
+spinner.stop(); // Stop spinner before execSync so stdio:inherit prints cleanly
+
 try {
   execSync('npm install', { cwd: projectRoot, stdio: 'inherit' });
 } catch (err) {
-  await abort('Root npm install failed.', err.message);
+  await abort('npm install failed.', err.message);
 }
-console.log(chalk.green('  ✔') + ' Root dependencies installed');
 
-// ── Step 13 / 14 — Client ─────────────────────────────────────────────────────
-spinner.start(chalk.cyan('Installing client dependencies...'));
-spinner.stop();
-try {
-  execSync('npm install', { cwd: path.join(projectRoot, 'client'), stdio: 'inherit' });
-} catch (err) {
-  await abort('Client npm install failed.', err.message);
-}
-console.log(chalk.green('  ✔') + ' Client dependencies installed');
-
-// ── Step 15 / 16 — Server ─────────────────────────────────────────────────────
-spinner.start(chalk.cyan('Installing server dependencies...'));
-spinner.stop();
-try {
-  execSync('npm install', { cwd: path.join(projectRoot, 'server'), stdio: 'inherit' });
-} catch (err) {
-  await abort('Server npm install failed.', err.message);
-}
-console.log(chalk.green('  ✔') + ' Server dependencies installed');
-
-// ── Step 17 — Spinner succeed ─────────────────────────────────────────────────
-spinner.succeed(chalk.green('All dependencies installed.'));
+console.log(chalk.green('  ✔') + ' All project dependencies installed');
 console.log('');
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -267,7 +260,7 @@ try {
 // Step 19 — Print success message (Section 13.1 exact format)
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('');
-console.log(chalk.bold.green('  🚀 StackForge setup complete!'));
+console.log(chalk.bold.green('  🚀 QuickStack setup complete!'));
 console.log('');
 console.log(chalk.white('  Next steps:'));
 console.log(`    ${chalk.cyan(`cd ${projectName}`)}`);
