@@ -16,7 +16,8 @@ connectDB();
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+// configure client url in .env file
+app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173", credentials: true }));
 app.use(express.json());
 /* QUICKSTACK_AUTH_MIDDLEWARE */
 
