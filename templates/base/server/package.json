@@ -7,10 +7,10 @@
     "dev":   "nodemon index.js"
   },
   "dependencies": {
-    "express":  "^4",
-    "mongoose": "^8",
-    "cors":     "^2",
-    "dotenv":   "^16"
+    "express":      "^4",
+    "mongoose":     "^8",
+    "cors":         "^2",
+    "dotenv":       "^16"
   },
   "devDependencies": {
     "nodemon": "^3"
