@@ -287,9 +287,9 @@ function printDone(name) {
 
 function onError(err) {
   spinner?.stop();
-  /* if (projectRoot && fs.existsSync(projectRoot)) {
+  if (projectRoot && fs.existsSync(projectRoot)) {
     fs.removeSync(projectRoot);
-  } */
+  }
   console.error(
     chalk.red("  ✖ Something went wrong during the setup.\n") +
       chalk.dim(`    Error: ${err.message}\n`),
