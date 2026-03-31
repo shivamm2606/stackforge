@@ -14,22 +14,20 @@ One command and you get a fully working MERN app with client and server running,
 npx create-quickstack my-app
 ```
 
-<!-- > **Note:** Uses native NPM Workspaces under the hood. All dependencies are installed in a single `node_modules`, making setup faster and more efficient. -->
 ---
 
 ## What you get
 
-| Layer           | Technology                                        |
-| --------------- | ------------------------------------------------- |
-| Frontend        | React 18 · Vite · Tailwind CSS · React Router v6  |
-| Backend         | Express.js · Mongoose · dotenv · CORS             |
-| Auth (optional) | JWT · bcryptjs · cookie-parser · protected routes |
-| Tooling         | NPM Workspaces · Axios · concurrently             |
-
+| Layer           | Technology (Stable)                   | Technology (Latest)                   |
+| --------------- | ------------------------------------- | ------------------------------------- |
+| Frontend        | React 18 · Vite 5 · Tailwind 3        | React 19 · Vite 6 · Tailwind 4        |
+| Backend         | Express.js · Mongoose · dotenv        | Express.js · Mongoose · dotenv        |
+| Auth (optional) | JWT · bcryptjs · cookie-parser        | JWT · bcryptjs · cookie-parser        |
+| Tooling         | NPM Workspaces · Axios · concurrently | NPM Workspaces · Axios · concurrently |
 
 ---
 
-## Getting started
+## 🚀 Getting started
 
 **Step 1 — Create the project**
 
@@ -38,15 +36,14 @@ npx create-quickstack my-app
 cd my-app
 ```
 
-**Step 2 — Configure environment**
+**Step 2 — Fill in your environment variables**
 
-```bash
-cp .env.example .env
-```
+A `.env` file is auto-created from `.env.example` — just open it and fill in your values.
 
-Open `.env` and add your `MONGO_URI`. If you chose auth, also add a `JWT_SECRET`.
+- `MONGO_URI` — your MongoDB connection string ([MongoDB Atlas](https://www.mongodb.com/cloud/atlas) or a local instance)
+- `JWT_SECRET` — only required if you chose `auth`
 
-**Step 3 — run it**
+**Step 3 — Run it**
 
 ```bash
 npm run dev
@@ -62,23 +59,25 @@ npm run dev
 
 ## 📦 Installing Packages (Important)
 
-QuickStack uses **NPM Workspaces** to keep your project setup fast and clean. This means there is only **one** `node_modules` folder at the root of your project. 
+QuickStack uses **NPM Workspaces** to keep your project setup fast and clean. This means there is only **one** `node_modules` folder at the root of your project.
 
 **You don't need to `cd` into the `client` or `server` folders!** Whenever you need to install a new package, run it from the root folder explicitly passing the workspace flag:
 
 **For the React Frontend:**
+
 ```bash
 npm install framer-motion --workspace=client
 
-# or 
+# or
 npm i framer-motion -w client
 ```
 
 **For the Express Backend:**
+
 ```bash
 npm install stripe --workspace=server
 
-# or 
+# or
 npm i stripe -w server
 ```
 
@@ -100,23 +99,47 @@ npx create-quickstack my-app --auth
 
 | Method | Route                | Description                      |
 | ------ | -------------------- | -------------------------------- |
-| `POST` | `/api/auth/register` | Create account                   |
-| `POST` | `/api/auth/login`    | Login, sets JWT cookie           |
-| `POST` | `/api/auth/logout`   | Clears the session cookie        |
-| `GET`  | `/api/auth/me`       | Returns current user (protected) |
+| `POST` | `/api/user/register` | Create account                   |
+| `POST` | `/api/user/login`    | Login, sets JWT cookie           |
+| `POST` | `/api/user/logout`   | Clears the session cookie        |
+| `GET`  | `/api/user/me`       | Returns current user (protected) |
+
+**Frontend routing (with `auth`)**
+
+| Route     | Description                                                       |
+| --------- | ----------------------------------------------------------------- |
+| `/`       | Home page — protected, redirects to `/login` if not authenticated |
+| `/login`  | Login page                                                        |
+| `/signup` | Signup page                                                       |
+
+After a successful login you are redirected to `/`. All pages are fully customizable starter templates located in `client/src/pages/` — modify them however you like.
+
+**Frontend routing (without `--auth`)**
+
+The app has a single route `/` rendering `Home.jsx`. Build from there.
 
 ---
 
-## CLI usage
+## Stability Presets
 
-```
-create-quickstack <project-name> [options]
+QuickStack allows you to choose between two production-ready stability tiers:
 
-Options:
-  --auth         Include authentication
-  -v, --version  Show version
-  -h, --help     Show help
-```
+- **Stable (`--stable`)**: Uses React 18.3, Tailwind v3, and React Router v6.
+- **Latest (`--latest`)**: Uses React 19, Tailwind v4, and React Router v7.
+
+If you don't specify a flag, the CLI will ask you to choose.
+
+---
+
+## ⚙️ CLI flags
+
+| Flag           | Description                                               |
+| -------------- | --------------------------------------------------------- |
+| `--auth`       | Includes full-stack JWT authentication                    |
+| `--stable`     | Uses Stable preset (React 18, Tailwind 3)                 |
+| `--latest`     | Uses Latest preset (React 19, Tailwind 4)                 |
+| `--yes`        | Skips all prompts, uses defaults (Stable preset, No Auth) |
+| `--help`       | Show help                                                 |
 
 ```bash
 npx create-quickstack my-app
@@ -138,7 +161,7 @@ From the project root:
 
 ---
 
-## Project structure
+## 🗂️ Project structure
 
 ```
 my-app/
@@ -170,7 +193,7 @@ my-app/
 server/
   models/user.model.js           # User schema
   controllers/user.controller.js # register, login, logout, getUser
-  routes/user.routes.js          # mounted at /api/auth
+  routes/user.routes.js          # mounted at /api/user
   middleware/authMiddleware.js   # JWT verification, supports header + cookie
 
 client/src/
@@ -182,10 +205,10 @@ client/src/
 ```
 
 </details>
+
 ---
 
-
-## Requirements
+## ✅ Requirements
 
 - Node.js ≥ 16
 - npm ≥ 7
@@ -193,7 +216,7 @@ client/src/
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 Clone the repo, link it locally, and use it like a normal user would:
 
@@ -209,7 +232,6 @@ For larger changes, open an issue first to discuss the approach.
 
 ---
 
-## License
+## 📄 License
 
 MIT © [Shivam Gupta](https://github.com/shivamm2606)
->>>>>>> Stashed changes
