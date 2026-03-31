@@ -16,7 +16,7 @@ connectDB();
 
 const app = express();
 
-// configure client url in .env file
+// CORS: set CLIENT_URL in .env for production
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173", credentials: true }));
 app.use(express.json());
 /* QUICKSTACK_AUTH_MIDDLEWARE */
@@ -30,7 +30,7 @@ app.use((err, req, res, next) => {
   const message    = err.message   ?? "Internal Server Error";
   res.status(statusCode).json({
     message,
-    ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 });
 

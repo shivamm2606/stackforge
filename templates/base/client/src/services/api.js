@@ -5,7 +5,7 @@ const api = axios.create({
   withCredentials: true,
 })
 
-// Auto-attach JWT token on every request — no manual header needed at call sites
+// Authorization header from localStorage when set
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
   if (token) config.headers.Authorization = 'Bearer ' + token

@@ -3,7 +3,7 @@ import { testHandler } from "../controllers/testController.js";
 
 const router = Router();
 
-//Route for testing the API
+// GET /api/test
 router.get("/test", testHandler);
 
 export default router;
