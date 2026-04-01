@@ -120,7 +120,7 @@ function checkTools() {
 function parseArguments() {
   const program = new Command();
   program
-    .name("quickstack-app")
+    .name("create-quickstack-app")
     .argument("[project-name]", "Name of the project")
     .option("--auth", "Add authentication (JWT + bcrypt)")
     .option("--latest", "Use the latest stack")

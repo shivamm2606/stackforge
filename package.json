@@ -1,5 +1,5 @@
 {
-  "name": "quickstack-app",
+  "name": "create-quickstack-app",
   "version": "1.0.0",
   "description": "CLI to scaffold a full-stack MERN application with optional JWT authentication",
   "type": "module",
@@ -39,7 +39,7 @@
     "lib"
   ],
   "bin": {
-    "quickstack-app": "bin/index.js"
+    "create-quickstack-app": "bin/index.js"
   },
   "engines": {
     "node": ">=16"

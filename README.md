@@ -2,16 +2,16 @@
 
 > Build full-stack MERN apps in seconds - not hours.
 
-[![npm version](https://img.shields.io/npm/v/quickstack-app.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/quickstack-app)
-[![node](https://img.shields.io/node/v/quickstack-app.svg?color=339933&logo=node.js)](https://nodejs.org)
-[![license](https://img.shields.io/npm/l/quickstack-app.svg?color=blue)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/create-quickstack-app.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/create-quickstack-app)
+[![node](https://img.shields.io/node/v/create-quickstack-app.svg?color=339933&logo=node.js)](https://nodejs.org)
+[![license](https://img.shields.io/npm/l/create-quickstack-app.svg?color=blue)](./LICENSE)
 
 I got tired of spending the first hour of every new project setting up the same Express server, connecting Mongoose, setting up Vite, and configuring CORS. So I built QuickStack.
 
 One command and you get a fully working MERN app with client and server running, zero config needed.
 
 ```bash
-npx quickstack-app my-app
+npx create-quickstack-app my-app
 ```
 
 ---
@@ -32,7 +32,7 @@ npx quickstack-app my-app
 **Step 1 - Create the project**
 
 ```bash
-npx quickstack-app my-app
+npx create-quickstack-app my-app
 cd my-app
 ```
 
@@ -92,7 +92,7 @@ By default, the CLI will prompt you to include authentication while creating the
 If you already know you want it, you can skip the prompt using the flag:
 
 ```bash
-npx quickstack-app my-app --auth
+npx create-quickstack-app my-app --auth
 ```
 
 **Endpoints you get:**
@@ -142,9 +142,9 @@ If you don't specify a flag, the CLI will ask you to choose.
 | `--help`   | Show help                                                 |
 
 ```bash
-npx quickstack-app my-app
-npx quickstack-app my-app --auth
-npx quickstack-app shop-app-2   # hyphens, underscores, numbers all work
+npx create-quickstack-app my-app
+npx create-quickstack-app my-app --auth
+npx create-quickstack-app shop-app-2   # hyphens, underscores, numbers all work
 ```
 
 ---
@@ -221,11 +221,11 @@ client/src/
 Clone the repo, link it locally, and use it like a normal user would:
 
 ```bash
-git clone https://github.com/shivamm2606/quickstack.git
-cd quickstack
+git clone https://github.com/shivamm2606/create-quickstack-app.git
+cd create-quickstack-app
 npm install
 npm link
-quickstack-app test-app
+create-quickstack-app test-app
 ```
 
 For larger changes, open an issue first to discuss the approach.
