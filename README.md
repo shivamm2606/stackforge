@@ -133,13 +133,14 @@ If you don't specify a flag, the CLI will ask you to choose.
 
 ## ⚙️ CLI flags
 
-| Flag       | Description                                               |
-| ---------- | --------------------------------------------------------- |
-| `--auth`   | Includes full-stack JWT authentication                    |
-| `--stable` | Uses Stable preset (React 18, Tailwind 3)                 |
-| `--latest` | Uses Latest preset (React 19, Tailwind 4)                 |
-| `--yes`    | Skips all prompts, uses defaults (Stable preset, No Auth) |
-| `--help`   | Show help                                                 |
+| Flag                 | Description                                               |
+| -------------------- | --------------------------------------------------------- |
+| `--auth`             | Includes full-stack JWT authentication                    |
+| `--stable`           | Uses Stable preset (React 18, Tailwind 3)                 |
+| `--latest`           | Uses Latest preset (React 19, Tailwind 4)                 |
+| `--yes`              | Skips all prompts, uses defaults (Stable preset, No Auth) |
+| `-v`, `--version`    | Shows the current version                                |
+| `--help`             | Show help                                                 |
 
 ```bash
 npx create-quickstack-app my-app
