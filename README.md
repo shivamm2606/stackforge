@@ -4,6 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/create-quickstack-app.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/create-quickstack-app)
 [![node](https://img.shields.io/node/v/create-quickstack-app.svg?color=339933&logo=node.js)](https://nodejs.org)
+[![downloads](https://img.shields.io/npm/dm/create-quickstack-app.svg?color=blue&logo=npm)](https://www.npmjs.com/package/create-quickstack-app)
 [![license](https://img.shields.io/npm/l/create-quickstack-app.svg?color=blue)](./LICENSE)
 
 I got tired of spending the first hour of every new project setting up the same Express server, connecting Mongoose, setting up Vite, and configuring CORS. So I built QuickStack.
